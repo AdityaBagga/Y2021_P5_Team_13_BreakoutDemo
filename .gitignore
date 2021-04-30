@@ -1,0 +1,4 @@
+/bin/
+# Ignore Eclipse Project Settings
+*.project
+*.classpath
