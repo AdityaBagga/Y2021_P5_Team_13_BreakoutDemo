@@ -1,15 +1,18 @@
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.lang.Object;
 
 import javafx.animation.AnimationTimer;
 import javafx.scene.Node;
+import javafx.scene.input.KeyCode;
 import javafx.scene.layout.Pane;
 
 public abstract class World extends Pane{
 	
 	private AnimationTimer timer;
 	private World world = this;
+	private HashSet<KeyCode> keys;
 	
 	public World() {
 		//List<Actor> actor = this.getChildren();
@@ -18,14 +21,34 @@ public abstract class World extends Pane{
 			public void handle(long now) {
 				world.act(now);
 				for(Node actor: world.getChildren()) {
-					((Actor) actor).act(now);
+					if(actor instanceof Actor) {
+						((Actor) actor).act(now);
+					}
 				}
 			}
 		};
+		keys = new HashSet<>();
 	}
 	
 	public abstract void act(long now);
-	
+
+	public void addKey(KeyCode key){
+		keys.add(key);
+	}
+
+	public void removeKey(KeyCode key){
+		keys.remove(key);
+	}
+
+	public boolean isKeyDown(KeyCode key){
+		if(keys.contains(key)) return true;
+		return false;
+	}
+
+	public HashSet<KeyCode> getKeys(){
+		return keys;
+	}
+
 	public void add(Actor actor) {
 		this.getChildren().add(actor);
 	}
@@ -44,14 +67,6 @@ public abstract class World extends Pane{
 	
 	public <A extends Actor> java.util.List<A> getObjects(java.lang.Class<A> cls){
 		List<A> list = new ArrayList<>();
-		
-		/*
-		for(int i=0; i<getChildren().size(); i++) {
-			if(getChildren().get(i).getClass().isInstance(cls)) {
-				list.add(cls.cast(getChildren().get(i)));
-			}
-		}
-		*/
 		
 		for(Node node: this.getChildren()) {
 			if(cls.isInstance(node)) {

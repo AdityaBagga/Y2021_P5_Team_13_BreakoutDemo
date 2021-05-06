@@ -9,8 +9,8 @@ public class Ball extends Actor{
 		String path = getClass().getClassLoader().getResource("resources/ball.png").toString();
 		Image img = new Image(path);
 		this.setImage(img);
-		dx = 0;
-		dy = 0;
+		dx = 3.5;
+		dy = -2;
 	}
 
 
@@ -30,8 +30,57 @@ public class Ball extends Actor{
 		}
 		if(getY() + getHeight() >= getWorld().getHeight()) {
 			dy = -dy;
+			//((BallWorld)getWorld()).getScore().setScore(((BallWorld)getWorld()).getScore().getScoreCount()-1000);
 		}
-		
+
+		if(getHeight() == getY()){
+			((BallWorld)getWorld()).getScore().setScore(((BallWorld)getWorld()).getScore().getScoreCount()-1000);
+		}
+
+//		if(getOneIntersectingObject(Paddle.class)!=null){
+//			dy = -dy;
+//		}
+
+		if(getOneIntersectingObject(Brick.class)!=null){
+			double x = getOneIntersectingObject(Brick.class).getX();
+			double y = getOneIntersectingObject(Brick.class).getY();
+			if(getX() >= x && getX() <= x + getOneIntersectingObject(Brick.class).getWidth()){
+				dy = -dy;
+			}
+			else if(getY() >= y && getY() <= y + getOneIntersectingObject(Brick.class).getHeight()){
+				dx = -dx;
+			}
+			else{
+				dy = -dy;
+				dx = -dx;
+			}
+			((BallWorld)getWorld()).getScore().setScore(((BallWorld)getWorld()).getScore().getScoreCount()+100);
+			getWorld().remove(getOneIntersectingObject(Brick.class));
+		}
+
+
+		if(getOneIntersectingObject(Paddle.class)!=null){
+			double x = getOneIntersectingObject(Paddle.class).getX();
+			double y = getOneIntersectingObject(Paddle.class).getY();
+			Paddle paddle = getOneIntersectingObject(Paddle.class);
+
+			if(!getOneIntersectingObject(Paddle.class).isMoving() && getX() >= x && getX() <= x + getOneIntersectingObject(Paddle.class).getWidth()){
+				dy = -dy;
+			}
+			if(getOneIntersectingObject(Paddle.class).isMoving()){
+				if(getX() <= paddle.getX() + paddle.getWidth()/3){
+					dx = -Math.abs(dx);
+					dy = -dy;
+				}
+				else if(getX() <= paddle.getX() + (paddle.getWidth()*2)/3){
+					dy = - dy;
+				}
+				else{
+					dx = Math.abs(dx);
+					dy = -dy;
+				}
+			}
+		}
 	}
 
 }
