@@ -58,24 +58,30 @@ public class Ball extends Actor{
 			getWorld().remove(getOneIntersectingObject(Brick.class));
 		}
 
+//		if(getOneIntersectingObject(Paddle.class).isMoving()) {
+//			System.out.println("HI");
+//		}
 
 		if(getOneIntersectingObject(Paddle.class)!=null){
 			double x = getOneIntersectingObject(Paddle.class).getX();
 			double y = getOneIntersectingObject(Paddle.class).getY();
 			Paddle paddle = getOneIntersectingObject(Paddle.class);
 
-			if(!getOneIntersectingObject(Paddle.class).isMoving() && getX() >= x && getX() <= x + getOneIntersectingObject(Paddle.class).getWidth()){
+			if((paddle.getDx()==0 || paddle.getPos() == paddle.getX()) && getX() >= x && getX() <= x + getOneIntersectingObject(Paddle.class).getWidth()){
 				dy = -dy;
 			}
-			if(getOneIntersectingObject(Paddle.class).isMoving()){
-				if(getX() <= paddle.getX() + paddle.getWidth()/3){
+			if(paddle.getDx()!=0 || paddle.getPos() != paddle.getX()){
+				System.out.println("HI");
+				if((paddle.getDx() < 0 || paddle.getPos() > paddle.getX()) &&
+						getX() <= paddle.getX() + paddle.getWidth()/3){
 					dx = -Math.abs(dx);
 					dy = -dy;
 				}
 				else if(getX() <= paddle.getX() + (paddle.getWidth()*2)/3){
 					dy = - dy;
 				}
-				else{
+				else if(((paddle.getDx() > 0 || paddle.getPos() < paddle.getX())) &&
+				getX() >= paddle.getX() + (paddle.getWidth()*2)/3){
 					dx = Math.abs(dx);
 					dy = -dy;
 				}
